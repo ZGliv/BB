@@ -3,12 +3,16 @@
  * page.tsx
  * This is the chat page component that handles conversations with selected characters.
  * It displays the voice orb and manages the Vapi AI voice session.
+ *
+ * Functions:
+ * - ChatPage: Renders the chat interface and handles navigation.
+ * - handleBack: Stops the current conversation and navigates back to the dashboard.
  */
 
 import { CHARACTERS } from '@/lib/constants';
 import { notFound, useRouter } from 'next/navigation';
 import VoiceOrb from '@/components/VoiceOrb';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 interface ChatPageProps {
   params: {
@@ -28,11 +32,21 @@ export default function ChatPage({ params }: ChatPageProps) {
     notFound();
   }
 
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      stopVoiceRef.current();
+    };
+  }, []);
+
   // Handler for back button
   const handleBack = (e: React.MouseEvent) => {
     e.preventDefault();
     stopVoiceRef.current();
-    setTimeout(() => router.push('/'), 100); // Give a moment for cleanup
+    // Wait a short moment to allow cleanup, then force a full reload
+    setTimeout(() => {
+      window.location.href = '/'; // This will fully reload the dashboard and kill all lingering resources
+    }, 100);
   };
 
   return (

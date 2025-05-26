@@ -1,9 +1,10 @@
 "use client";
 /**
  * InfiniteCharacterCarousel.tsx
- * This component displays an infinite, center-focused carousel of characters.
- * The center character is large and in focus, while the side characters are smaller and blurred.
- * Navigation is smooth and seamless, with infinite looping.
+ * This component displays an infinite, center-focused carousel of characters as floating circles with a premium, arc-based transition animation.
+ * The center character scales down and fades as it moves to the side, while the new center scales up and comes forward.
+ * Characters move in a smooth arc with a slight bounce at the end for a delightful, tactile feel.
+ * Each character has a soft, blurred radial shadow for context and depth.
  *
  * Functions:
  * - InfiniteCharacterCarousel: Renders the infinite carousel and handles navigation.
@@ -48,106 +49,147 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
   const leftIdx = getIdx(-1);
   const rightIdx = getIdx(1);
 
-  // Animation classes
+  // Animation classes for premium arc-based transition
   const transitionClass =
     direction === 'left'
-      ? 'animate-slide-left'
+      ? 'animate-arc-left'
       : direction === 'right'
-      ? 'animate-slide-right'
+      ? 'animate-arc-right'
       : '';
 
   return (
+    // Carousel outer container with glassmorphism and padding
     <div className="relative w-full flex flex-col items-center select-none">
-      {/* Carousel container */}
+      {/* Fixed-position left arrow with enhanced style */}
+      <button
+        aria-label="Scroll left"
+        onClick={moveLeft}
+        className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full p-4 m-2 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200 fixed left-1/2 -translate-x-[420px] top-1/2 -translate-y-1/2 backdrop-blur-lg"
+        style={{ pointerEvents: 'auto' }}
+      >
+        <span className="text-4xl font-bold text-blue-700 drop-shadow">&#8592;</span>
+      </button>
+
+      {/* Fixed-position right arrow with enhanced style */}
+      <button
+        aria-label="Scroll right"
+        onClick={moveRight}
+        className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full p-4 m-2 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200 fixed right-1/2 translate-x-[420px] top-1/2 -translate-y-1/2 backdrop-blur-lg"
+        style={{ pointerEvents: 'auto' }}
+      >
+        <span className="text-4xl font-bold text-blue-700 drop-shadow">&#8594;</span>
+      </button>
+
+      {/* Carousel container with premium arc animation and spacing */}
       <div
         className={`flex items-center justify-center w-full gap-0 md:gap-8 lg:gap-16 relative overflow-visible ${transitionClass}`}
-        style={{ minHeight: 340, transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)' }}
+        style={{ minHeight: 340, perspective: 1200, transition: 'none' }}
       >
-        {/* Left arrow */}
-        <button
-          aria-label="Scroll left"
-          onClick={moveLeft}
-          className="z-10 bg-white shadow-lg rounded-full p-3 m-2 hover:bg-gray-200 transition absolute left-0 top-1/2 -translate-y-1/2"
-        >
-          <span className="text-4xl font-bold">&#8592;</span>
-        </button>
-
-        {/* Left (blurred, small) */}
-        <div className="hidden md:block relative flex-shrink-0" style={{ width: 160, height: 160 }}>
-          <div className="relative w-full h-full opacity-60 blur-sm scale-90 transition-all duration-300">
+        {/* Left (blurred, faded, small, floating circle, with context shadow) */}
+        <div className="hidden md:flex flex-col items-center flex-shrink-0 arc-left">
+          <div className="relative flex items-center justify-center">
+            {/* Radial shadow for context */}
+            <div className="absolute w-[160px] h-[160px] rounded-full bg-gradient-to-br from-blue-200/30 via-white/0 to-purple-200/20 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
             <Image
               src={characters[leftIdx].imagePath}
               alt={characters[leftIdx].name}
-              fill
-              sizes="160px"
-              className="rounded-full object-cover border-4 border-gray-200 shadow-md"
+              width={140}
+              height={140}
+              className="rounded-full object-cover border-4 border-gray-200 shadow-md opacity-60 blur-md grayscale transition-all duration-300 z-10"
               style={{ zIndex: 1 }}
             />
           </div>
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full text-center">
-            <span className="text-lg font-semibold text-gray-400 drop-shadow">{characters[leftIdx].name}</span>
-          </div>
+          <span className="mt-2 text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[leftIdx].name}</span>
         </div>
 
-        {/* Center (focused, large) */}
-        <Link href={`/chat/${characters[centerIdx].id}`} className="relative flex-shrink-0 group" style={{ width: 240, height: 240 }}>
-          <div className="relative w-full h-full scale-110 shadow-2xl transition-all duration-300 group-hover:scale-125">
+        {/* Center (focused, large, glowing, floating circle, with context shadow) */}
+        <Link href={`/chat/${characters[centerIdx].id}`} className="relative flex flex-col items-center flex-shrink-0 arc-center group">
+          <div className="relative flex items-center justify-center">
+            {/* Radial shadow for context */}
+            <div className="absolute w-[260px] h-[260px] rounded-full bg-gradient-to-br from-blue-300/40 via-white/0 to-purple-300/30 blur-2xl z-0" style={{ left: '-20px', top: '-20px' }} />
             <Image
               src={characters[centerIdx].imagePath}
               alt={characters[centerIdx].name}
-              fill
-              sizes="240px"
-              className="rounded-full object-cover border-8 border-blue-500 shadow-xl"
+              width={220}
+              height={220}
+              className="rounded-full object-cover border-8 border-blue-500 shadow-xl animate-glow animate-float group-hover:scale-110 transition-transform duration-300 z-10"
               priority
               style={{ zIndex: 2 }}
             />
           </div>
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full text-center">
-            <span className="text-3xl font-extrabold text-blue-700 drop-shadow-lg tracking-tight" style={{ fontFamily: 'Inter, sans-serif' }}>{characters[centerIdx].name}</span>
-          </div>
+          <span className="mt-4 text-3xl font-extrabold text-blue-700 drop-shadow-lg tracking-tight text-center w-full" style={{ fontFamily: 'Inter, sans-serif' }}>{characters[centerIdx].name}</span>
         </Link>
 
-        {/* Right (blurred, small) */}
-        <div className="hidden md:block relative flex-shrink-0" style={{ width: 160, height: 160 }}>
-          <div className="relative w-full h-full opacity-60 blur-sm scale-90 transition-all duration-300">
+        {/* Right (blurred, faded, small, floating circle, with context shadow) */}
+        <div className="hidden md:flex flex-col items-center flex-shrink-0 arc-right">
+          <div className="relative flex items-center justify-center">
+            {/* Radial shadow for context */}
+            <div className="absolute w-[160px] h-[160px] rounded-full bg-gradient-to-bl from-purple-200/30 via-white/0 to-blue-200/20 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
             <Image
               src={characters[rightIdx].imagePath}
               alt={characters[rightIdx].name}
-              fill
-              sizes="160px"
-              className="rounded-full object-cover border-4 border-gray-200 shadow-md"
+              width={140}
+              height={140}
+              className="rounded-full object-cover border-4 border-gray-200 shadow-md opacity-60 blur-md grayscale transition-all duration-300 z-10"
               style={{ zIndex: 1 }}
             />
           </div>
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full text-center">
-            <span className="text-lg font-semibold text-gray-400 drop-shadow">{characters[rightIdx].name}</span>
-          </div>
+          <span className="mt-2 text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[rightIdx].name}</span>
         </div>
-
-        {/* Right arrow */}
-        <button
-          aria-label="Scroll right"
-          onClick={moveRight}
-          className="z-10 bg-white shadow-lg rounded-full p-3 m-2 hover:bg-gray-200 transition absolute right-0 top-1/2 -translate-y-1/2"
-        >
-          <span className="text-4xl font-bold">&#8594;</span>
-        </button>
       </div>
-      {/* Animation keyframes for sliding */}
+      {/* Animation keyframes for premium arc transition, glow, and floating */}
       <style jsx global>{`
-        @keyframes slide-left {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(33%); }
+        @keyframes arc-left {
+          0% { transform: scale(0.9) translateX(-40px) translateY(0) opacity(0.6); }
+          40% { transform: scale(0.8) translateX(-120px) translateY(-30px) opacity(0.3); }
+          70% { transform: scale(1.05) translateX(0px) translateY(-10px) opacity(1); }
+          90% { transform: scale(1.1) translateX(0px) translateY(0px) opacity(1); }
+          100% { transform: scale(1.1) translateX(0px) translateY(0px) opacity(1); }
         }
-        @keyframes slide-right {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-33%); }
+        @keyframes arc-center {
+          0% { transform: scale(1.1) translateX(0px) translateY(0px) opacity(1); }
+          40% { transform: scale(1.05) translateX(0px) translateY(-10px) opacity(1); }
+          70% { transform: scale(0.8) translateX(120px) translateY(-30px) opacity(0.3); }
+          100% { transform: scale(0.9) translateX(40px) translateY(0) opacity(0.6); }
         }
-        .animate-slide-left {
-          animation: slide-left 0.3s cubic-bezier(0.4,0,0.2,1);
+        @keyframes arc-right {
+          0% { transform: scale(0.9) translateX(40px) translateY(0) opacity(0.6); }
+          40% { transform: scale(0.8) translateX(120px) translateY(-30px) opacity(0.3); }
+          70% { transform: scale(1.05) translateX(0px) translateY(-10px) opacity(1); }
+          90% { transform: scale(1.1) translateX(0px) translateY(0px) opacity(1); }
+          100% { transform: scale(1.1) translateX(0px) translateY(0px) opacity(1); }
         }
-        .animate-slide-right {
-          animation: slide-right 0.3s cubic-bezier(0.4,0,0.2,1);
+        .animate-arc-left .arc-left {
+          animation: arc-left 1.1s cubic-bezier(0.77,0,0.175,1) both;
+        }
+        .animate-arc-left .arc-center {
+          animation: arc-center 1.1s cubic-bezier(0.77,0,0.175,1) both;
+        }
+        .animate-arc-left .arc-right {
+          animation: arc-right 1.1s cubic-bezier(0.77,0,0.175,1) both;
+        }
+        .animate-arc-right .arc-right {
+          animation: arc-left 1.1s cubic-bezier(0.77,0,0.175,1) both reverse;
+        }
+        .animate-arc-right .arc-center {
+          animation: arc-center 1.1s cubic-bezier(0.77,0,0.175,1) both reverse;
+        }
+        .animate-arc-right .arc-left {
+          animation: arc-right 1.1s cubic-bezier(0.77,0,0.175,1) both reverse;
+        }
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 0 32px 8px rgba(59,130,246,0.25), 0 0 0 0 rgba(59,130,246,0.10); }
+          50% { box-shadow: 0 0 64px 24px rgba(59,130,246,0.40), 0 0 0 0 rgba(59,130,246,0.10); }
+        }
+        .animate-glow {
+          animation: glow 2s infinite;
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-12px); }
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
         }
       `}</style>
     </div>

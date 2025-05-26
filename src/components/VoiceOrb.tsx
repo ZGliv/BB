@@ -5,6 +5,7 @@
  *
  * Functions:
  * - VoiceOrb: Renders the orb and manages Vapi AI voice session.
+ * - cleanup: Stops the current Vapi instance and removes all listeners.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -26,12 +27,41 @@ export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
   // Ref to store the current Vapi instance
   const vapiRef = useRef<any>(null);
 
-  useEffect(() => {
-    // Stop any previous Vapi instance
-    if (lastVapiInstance) {
-      lastVapiInstance.stop();
-      lastVapiInstance.removeAllListeners();
+  // Function to clean up the current Vapi instance
+  const cleanup = () => {
+    if (vapiRef.current) {
+      if (typeof vapiRef.current.destroy === 'function') {
+        vapiRef.current.destroy();
+      } else {
+        vapiRef.current.stop();
+        vapiRef.current.removeAllListeners();
+      }
+      vapiRef.current = null;
     }
+    if (lastVapiInstance) {
+      if (typeof lastVapiInstance.destroy === 'function') {
+        lastVapiInstance.destroy();
+      } else {
+        lastVapiInstance.stop();
+        lastVapiInstance.removeAllListeners();
+      }
+      lastVapiInstance = null;
+    }
+    const win = typeof window !== 'undefined' ? (window as any) : undefined;
+    if (win && win.DailyIframe && win.DailyIframe.instance) {
+      try {
+        win.DailyIframe.instance.destroy();
+      } catch (e) {
+        // Ignore if already destroyed or not available
+      }
+    }
+    setIsSpeaking(false);
+  };
+
+  useEffect(() => {
+    // Clean up any existing Vapi instance
+    cleanup();
+
     // Create a new Vapi instance for this session
     const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || '');
     vapiRef.current = vapi;
@@ -44,25 +74,20 @@ export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
     vapi.on('speech-start', () => setIsSpeaking(true));
     vapi.on('speech-end', () => setIsSpeaking(false));
 
-    // Expose stop function to parent via ref
+    // Expose cleanup function to parent via ref
     if (stopVoiceRef) {
-      stopVoiceRef.current = () => {
-        vapi.stop();
-        vapi.removeAllListeners();
-      };
+      stopVoiceRef.current = cleanup;
     }
 
     // Stop the call if the user reloads or closes the tab
     const handleBeforeUnload = () => {
-      vapi.stop();
-      vapi.removeAllListeners();
+      cleanup();
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     // Clean up on unmount
     return () => {
-      vapi.stop();
-      vapi.removeAllListeners();
+      cleanup();
       window.removeEventListener('beforeunload', handleBeforeUnload);
       if (stopVoiceRef) stopVoiceRef.current = () => {};
     };

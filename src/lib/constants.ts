@@ -21,10 +21,10 @@ export const CHARACTERS: Character[] = [
     imagePath: '/images/lingling.png'
   },
   {
-    id: 'rajesh',
-    name: 'Rajesh',
+    id: 'ravi',
+    name: 'Ravi',
     assistantId: '09b1d4b8-a2e0-49bd-8909-d67a09e93f60',
-    imagePath: '/images/rajesh.png'
+    imagePath: '/images/ravi.png'
   },
   {
     id: 'miguel',

@@ -12,98 +12,43 @@ BigotBot is a Next.js application that integrates with Vapi.ai to provide real-t
 - Firebase authentication
 - Modern UI with Tailwind CSS and shadcn/ui components
 
-## Implementation Roadmap
 
-### Phase 1: Project Setup and Basic Structure
-- [x] Initialize Next.js project with TypeScript and Tailwind CSS
-- [x] Install required dependencies
-- [ ] Set up project structure
-- [ ] Configure environment variables
-- [ ] Set up Firebase authentication
+## File Structure
 
-### Phase 2: Core Components Development
-- [ ] Create AIConversation component
-  - [ ] Implement Vapi SDK initialization
-  - [ ] Add microphone controls
-  - [ ] Set up event listeners
-  - [ ] Implement error handling
-- [ ] Create AudioVisualizer component
-  - [ ] Implement audio visualization
-  - [ ] Add speaking status indicators
-- [ ] Create Transcript display
-  - [ ] Implement message bubbles
-  - [ ] Add auto-scrolling
-  - [ ] Style user/AI messages
-
-### Phase 3: Voice Integration
-- [ ] Implement Vapi SDK integration
-  - [ ] Handle multiple SDK format variations
-  - [ ] Set up event listeners
-  - [ ] Implement cleanup
-- [ ] Add fallback simulation
-  - [ ] Create warning system
-  - [ ] Implement text-based simulation
-  - [ ] Add sample responses
-
-### Phase 4: Error Handling and Polish
-- [ ] Implement comprehensive error handling
-  - [ ] Handle microphone permissions
-  - [ ] Handle SDK initialization
-  - [ ] Add user-friendly error messages
-- [ ] Add loading states
-- [ ] Implement responsive design
-- [ ] Add animations and transitions
-
-## Project Structure
 ```
-dayron-gpt/
-├── src/
-│   ├── app/
-│   │   ├── (protected)/
-│   │   │   └── chat/
-│   │   │       └── [id]/
-│   │   │           └── page.tsx
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   │
-│   ├── components/
-│   │   ├── dashboard/
-│   │   │   └── ai-conversation.tsx
-│   │   └── ui/
-│   │       └── audio-visualizer.tsx
-│   │
-│   ├── lib/
-│   │   ├── vapi/
-│   │   │   └── vapi-config.ts
-│   │   └── types.ts
-│   │
-│   └── styles/
-│       └── globals.css
+bigot-bot/
+├── src/                                    # Source code directory
+│   ├── app/                                  # Next.js app directory
+│   │   ├── (protected)/                        # Protected routes
+│   │   ├── page.tsx                            # Main landing page
+│   │   ├── layout.tsx                          # Root layout component
+│   │   └── globals.css                         # Global styles
+│   ├── components/                           # React components
+│   │   ├── VoiceOrb.tsx                        # Voice visualization component
+│   │   ├── InfiniteCharacterCarousel.tsx       # Character carousel component
+│   │   ├── ChatInterface.tsx                   # Chat interface component
+│   │   ├── CharacterCard.tsx                   # Character card component
+│   │   ├── dashboard/                          # Dashboard-specific components
+│   │   └── ui/                                 # Reusable UI components
+│   └── lib/                                  # Utility functions and configurations
+│       ├── vapi/                               # Voice API related utilities
+│       ├── vapiSingleton.ts                    # Voice API singleton instance
+│       ├── constants.ts                        # Application constants
+│       ├── types.ts                            # TypeScript type definitions
+│       └── firebase.ts                         # Firebase configuration
 │
-├── public/
-├── .env.local
-├── package.json
-├── tsconfig.json
-└── tailwind.config.js
+├── public/                                 # Static assets
+├── docs/                                   # Documentation files
+├── .next/                                  # Next.js build output
+├── node_modules/                           # Dependencies
+│
+├── .env.local                              # Environment variables and secrets
+├──.gitignore                              # Git ignore rules
+├── package.json                            # Project configuration and dependencies
+├── package-lock.json                       # Dependency lock file
+├── tsconfig.json                           # TypeScript configuration
+├── next.config.js                          # Next.js configuration
+├── tailwind.config.js                      # Tailwind CSS configuration
+├── postcss.config.mjs                      # PostCSS configuration
+└── eslint.config.mjs                       # ESLint configuration
 ```
-
-## Environment Variables
-```
-NEXT_PUBLIC_VAPI_PUBLIC_KEY=your_public_key
-VAPI_PRIVATE_KEY=your_private_key
-```
-
-## Getting Started
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up environment variables
-4. Run development server: `npm run dev`
-
-## Dependencies
-- Next.js 14
-- TypeScript
-- Tailwind CSS
-- shadcn/ui
-- @vapi-ai/web
-- Firebase
-- Various UI utilities (class-variance-authority, clsx, etc.) 
