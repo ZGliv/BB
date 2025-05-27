@@ -102,32 +102,30 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      style={{ minHeight: 320 }}
     >
-      {/* Arrows outside the character container, vertically centered */}
-      <div className="w-full flex items-center justify-between mb-2" style={{ minHeight: 0 }}>
-        {/* Left arrow - perfectly centered in its button */}
-        <button
-          aria-label="Scroll left"
-          onClick={moveLeft}
-          className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full flex items-center justify-center p-2 md:p-4 m-2 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200"
-          style={{ minWidth: 48, minHeight: 48, width: 56, height: 56 }}
-        >
-          <span className="flex items-center justify-center w-full h-full text-2xl md:text-4xl font-bold text-blue-700 drop-shadow">&#8592;</span>
-        </button>
-        {/* Right arrow - perfectly centered in its button */}
-        <button
-          aria-label="Scroll right"
-          onClick={moveRight}
-          className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full flex items-center justify-center p-2 md:p-4 m-2 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200"
-          style={{ minWidth: 48, minHeight: 48, width: 56, height: 56 }}
-        >
-          <span className="flex items-center justify-center w-full h-full text-2xl md:text-4xl font-bold text-blue-700 drop-shadow">&#8594;</span>
-        </button>
-      </div>
-      {/* Carousel container with premium arc animation and spacing, more compact on mobile, now with larger images */}
+      {/* Left arrow - absolutely positioned, vertically centered, half in/half out */}
+      <button
+        aria-label="Scroll left"
+        onClick={moveLeft}
+        className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full flex items-center justify-center p-2 md:p-4 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200 absolute left-[-28px] top-1/2 -translate-y-1/2"
+        style={{ minWidth: 56, minHeight: 56, width: 64, height: 64 }}
+      >
+        <span className="flex items-center justify-center w-full h-full text-2xl md:text-4xl font-bold text-blue-700 drop-shadow">&#8592;</span>
+      </button>
+      {/* Right arrow - absolutely positioned, vertically centered, half in/half out */}
+      <button
+        aria-label="Scroll right"
+        onClick={moveRight}
+        className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full flex items-center justify-center p-2 md:p-4 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200 absolute right-[-28px] top-1/2 -translate-y-1/2"
+        style={{ minWidth: 56, minHeight: 56, width: 64, height: 64 }}
+      >
+        <span className="flex items-center justify-center w-full h-full text-2xl md:text-4xl font-bold text-blue-700 drop-shadow">&#8594;</span>
+      </button>
+      {/* Carousel container with premium arc animation and spacing, fills available space */}
       <div
         className={`flex items-center justify-center w-full gap-2 md:gap-8 lg:gap-16 relative overflow-visible ${transitionClass}`}
-        style={{ minHeight: 260, perspective: 1200, transition: 'none' }}
+        style={{ minHeight: 260, perspective: 1200, transition: 'none', paddingLeft: 48, paddingRight: 48 }}
       >
         {/* Left (blurred, faded, large, floating circle, with context shadow) */}
         <div className="flex flex-col items-center flex-shrink-0 arc-left">
