@@ -46,6 +46,7 @@ export default function VoiceOrb({ character, stopVoiceRef, onTranscript }: Voic
 
   useEffect(() => {
     let isMounted = true;
+    let startTimeout: NodeJS.Timeout | null = null;
 
     const initConversation = async () => {
       // Fully stop any existing conversation & clear listeners
@@ -72,8 +73,10 @@ export default function VoiceOrb({ character, stopVoiceRef, onTranscript }: Voic
         }
       });
 
-      // Start the conversation with the selected assistant
-      vapi.start(character.assistantId);
+      // Add a 1 second delay before starting the conversation
+      startTimeout = setTimeout(() => {
+        vapi.start(character.assistantId);
+      }, 1000);
 
       // Expose cleanup function to parent via ref
       if (stopVoiceRef) {
@@ -95,6 +98,7 @@ export default function VoiceOrb({ character, stopVoiceRef, onTranscript }: Voic
       window.removeEventListener('beforeunload', handleBeforeUnload);
       if (stopVoiceRef) stopVoiceRef.current = () => {};
       isMounted = false;
+      if (startTimeout) clearTimeout(startTimeout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [character.assistantId]);

@@ -57,7 +57,8 @@ export default function ChatPage({ params }: ChatPageProps) {
           src={character.backgroundImage}
           alt={`${character.name}'s background`}
           fill
-          className="object-cover"
+          className="object-cover object-center sm:object-center md:object-center lg:object-center w-screen min-h-screen h-full"
+          style={{ objectPosition: 'center', objectFit: 'cover' }}
           priority
         />
         {/* Overlay to ensure content is readable */}
