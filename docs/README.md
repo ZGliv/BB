@@ -20,8 +20,8 @@ A Next.js application that integrates with Vapi.ai for real-time voice conversat
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/dayron-gpt.git
-cd dayron-gpt
+git clone https://github.com/yourusername/bigot-bot.git
+cd bigot-bot
 ```
 
 2. Install dependencies:
@@ -45,7 +45,7 @@ npm run dev
 ## Project Structure
 
 ```
-dayron-gpt/
+bigot-bot/
 ├── src/
 │   ├── app/
 │   │   ├── (protected)/
