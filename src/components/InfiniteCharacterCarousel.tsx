@@ -27,6 +27,8 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
   const [centerIdx, setCenterIdx] = useState(0);
   const total = characters.length;
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
+  // Prevent rapid clicks during animation
+  const [isAnimating, setIsAnimating] = useState(false);
   
   // Touch handling refs
   const touchStartX = useRef<number>(0);
@@ -37,20 +39,26 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
 
   // Move carousel left (previous character becomes center)
   const moveLeft = () => {
+    if (isAnimating) return; // Prevent overlapping animations
+    setIsAnimating(true);
     setDirection('left');
     setTimeout(() => {
       setCenterIdx((prev) => (prev - 1 + total) % total);
       setDirection(null);
-    }, 200);
+      setIsAnimating(false);
+    }, 350); // Match animation duration
   };
 
   // Move carousel right (next character becomes center)
   const moveRight = () => {
+    if (isAnimating) return; // Prevent overlapping animations
+    setIsAnimating(true);
     setDirection('right');
     setTimeout(() => {
       setCenterIdx((prev) => (prev + 1) % total);
       setDirection(null);
-    }, 200);
+      setIsAnimating(false);
+    }, 350); // Match animation duration
   };
 
   // Touch event handlers for mobile swipe
@@ -95,79 +103,81 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Left arrow - responsive positioning */}
+      {/* Left arrow - responsive positioning and smaller on mobile */}
       <button
         aria-label="Scroll left"
         onClick={moveLeft}
-        className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full p-3 md:p-4 m-2 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200 absolute left-2 md:left-1/2 md:-translate-x-[420px] top-1/2 -translate-y-1/2 backdrop-blur-lg"
+        className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full p-2 md:p-4 m-2 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200 absolute left-2 md:left-1/2 md:-translate-x-[420px] top-1/2 -translate-y-1/2 backdrop-blur-lg"
+        style={{ minWidth: 36, minHeight: 36, width: 40, height: 40 }}
       >
-        <span className="text-2xl md:text-4xl font-bold text-blue-700 drop-shadow">&#8592;</span>
+        <span className="text-xl md:text-4xl font-bold text-blue-700 drop-shadow">&#8592;</span>
       </button>
 
-      {/* Right arrow - responsive positioning */}
+      {/* Right arrow - responsive positioning and smaller on mobile */}
       <button
         aria-label="Scroll right"
         onClick={moveRight}
-        className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full p-3 md:p-4 m-2 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200 absolute right-2 md:right-1/2 md:translate-x-[420px] top-1/2 -translate-y-1/2 backdrop-blur-lg"
+        className="z-30 bg-white/80 shadow-2xl border border-blue-200 rounded-full p-2 md:p-4 m-2 hover:bg-blue-100 hover:scale-110 active:scale-95 transition-all duration-200 absolute right-2 md:right-1/2 md:translate-x-[420px] top-1/2 -translate-y-1/2 backdrop-blur-lg"
+        style={{ minWidth: 36, minHeight: 36, width: 40, height: 40 }}
       >
-        <span className="text-2xl md:text-4xl font-bold text-blue-700 drop-shadow">&#8594;</span>
+        <span className="text-xl md:text-4xl font-bold text-blue-700 drop-shadow">&#8594;</span>
       </button>
 
-      {/* Carousel container with premium arc animation and spacing */}
+      {/* Carousel container with premium arc animation and spacing, more compact on mobile */}
       <div
-        className={`flex items-center justify-center w-full gap-4 md:gap-8 lg:gap-16 relative overflow-visible ${transitionClass}`}
-        style={{ minHeight: 340, perspective: 1200, transition: 'none' }}
+        className={`flex items-center justify-center w-full gap-2 md:gap-8 lg:gap-16 relative overflow-visible ${transitionClass}`}
+        style={{ minHeight: 220, perspective: 1200, transition: 'none' }}
       >
         {/* Left (blurred, faded, small, floating circle, with context shadow) */}
         <div className="flex flex-col items-center flex-shrink-0 arc-left">
           <div className="relative flex items-center justify-center">
             {/* Radial shadow for context */}
-            <div className="absolute w-[160px] h-[160px] rounded-full bg-gradient-to-br from-blue-200/30 via-white/0 to-purple-200/20 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
+            <div className="absolute w-[90px] h-[90px] md:w-[160px] md:h-[160px] rounded-full bg-gradient-to-br from-blue-200/30 via-white/0 to-purple-200/20 blur-2xl z-0" style={{ left: '-6px', top: '-6px' }} />
             <Image
               src={characters[leftIdx].imagePath}
               alt={characters[leftIdx].name}
-              width={140}
-              height={140}
-              className="rounded-full object-cover border-4 border-gray-200 shadow-md opacity-60 blur-md grayscale transition-all duration-300 z-10 w-[100px] h-[100px] md:w-[140px] md:h-[140px]"
+              width={80}
+              height={80}
+              className="rounded-full object-cover border-4 border-gray-200 shadow-md opacity-60 blur-md grayscale transition-all duration-300 z-10 w-[60px] h-[60px] md:w-[140px] md:h-[140px]"
               style={{ zIndex: 1 }}
             />
           </div>
-          <span className="mt-2 text-sm md:text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[leftIdx].name}</span>
+          <span className="mt-1 text-xs md:text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[leftIdx].name}</span>
         </div>
 
         {/* Center (focused, large, glowing, floating circle, with context shadow) */}
         <Link href={`/chat/${characters[centerIdx].id}`} className="relative flex flex-col items-center flex-shrink-0 arc-center group">
           <div className="relative flex items-center justify-center">
             {/* Radial shadow for context */}
-            <div className="absolute w-[260px] h-[260px] rounded-full bg-gradient-to-br from-blue-300/40 via-white/0 to-purple-300/30 blur-2xl z-0" style={{ left: '-20px', top: '-20px' }} />
+            <div className="absolute w-[140px] h-[140px] md:w-[260px] md:h-[260px] rounded-full bg-gradient-to-br from-blue-300/40 via-white/0 to-purple-300/30 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
             <Image
               src={characters[centerIdx].imagePath}
               alt={characters[centerIdx].name}
-              width={220}
-              height={220}
-              className="rounded-full object-cover border-8 border-blue-500 shadow-xl animate-glow animate-float group-hover:scale-110 transition-transform duration-300 z-10 w-[160px] h-[160px] md:w-[220px] md:h-[220px]"
+              width={120}
+              height={120}
+              className="rounded-full object-cover border-8 border-blue-500 shadow-xl animate-glow animate-float group-hover:scale-110 transition-transform duration-300 z-10 w-[100px] h-[100px] md:w-[220px] md:h-[220px]"
               priority
               style={{ zIndex: 2 }}
             />
           </div>
-          <span className="mt-4 text-xl md:text-3xl font-extrabold text-blue-700 drop-shadow-lg tracking-tight text-center w-full" style={{ fontFamily: 'Inter, sans-serif' }}>{characters[centerIdx].name}</span>
+          <span className="mt-2 text-base md:text-3xl font-extrabold text-blue-700 drop-shadow-lg tracking-tight text-center w-full" style={{ fontFamily: 'Inter, sans-serif' }}>{characters[centerIdx].name}</span>
         </Link>
 
         {/* Right (blurred, faded, small, floating circle, with context shadow) */}
         <div className="flex flex-col items-center flex-shrink-0 arc-right">
           <div className="relative flex items-center justify-center">
             {/* Radial shadow for context */}
-            <div className="absolute w-[160px] h-[160px] rounded-full bg-gradient-to-bl from-purple-200/30 via-white/0 to-blue-200/20 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
+            <div className="absolute w-[90px] h-[90px] md:w-[160px] md:h-[160px] rounded-full bg-gradient-to-bl from-purple-200/30 via-white/0 to-blue-200/20 blur-2xl z-0" style={{ left: '-6px', top: '-6px' }} />
             <Image
               src={characters[rightIdx].imagePath}
               alt={characters[rightIdx].name}
-              width={140}
-              height={140}
-              className="rounded-full object-cover border-4 border-gray-200 shadow-md opacity-60 blur-md grayscale transition-all duration-300 z-10 w-[100px] h-[100px] md:w-[140px] md:h-[140px]"
+              width={80}
+              height={80}
+              className="rounded-full object-cover border-4 border-gray-200 shadow-md opacity-60 blur-md grayscale transition-all duration-300 z-10 w-[60px] h-[60px] md:w-[140px] md:h-[140px]"
               style={{ zIndex: 1 }}
             />
           </div>
-          <span className="mt-2 text-sm md:text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[rightIdx].name}</span>
+          <span className="mt-1 text-xs md:text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[rightIdx].name}</span>
         </div>
       </div>
       {/* Animation keyframes for premium arc transition, glow, and floating */}
