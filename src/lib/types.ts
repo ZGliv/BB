@@ -71,6 +71,7 @@ export interface Character {
   name: string;
   assistantId: string;
   imagePath: string;
+  backgroundImage: string;
 }
 
 // Interface for chat message

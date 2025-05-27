@@ -95,33 +95,33 @@ export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
   }, [character.assistantId]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-[400px]">
+    <div className="flex flex-col items-center justify-center">
       {/* Pulsing orb visual with character image */}
       <div
-        className={`w-48 h-48 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 overflow-hidden
+        className={`w-64 h-64 md:w-80 md:h-80 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 overflow-hidden
           ${isSpeaking ? 'bg-blue-400 animate-pulse-orb' : 'bg-blue-200'}`}
       >
         <Image
           src={character.imagePath}
           alt={character.name}
-          width={192}
-          height={192}
+          width={320}
+          height={320}
           className="object-cover w-full h-full rounded-full"
           priority
         />
       </div>
+      <div className="mt-8 text-2xl md:text-3xl text-white font-semibold text-center drop-shadow-lg">
+        {isSpeaking ? `${character.name} is talking...` : `Say something to ${character.name}!`}
+      </div>
       <style jsx global>{`
         @keyframes pulse-orb {
           0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.7); }
-          50% { box-shadow: 0 0 40px 20px rgba(59,130,246,0.3); }
+          50% { box-shadow: 0 0 60px 30px rgba(59,130,246,0.3); }
         }
         .animate-pulse-orb {
           animation: pulse-orb 1.2s infinite;
         }
       `}</style>
-      <div className="mt-8 text-xl text-gray-700 font-semibold text-center">
-        {isSpeaking ? `${character.name} is talking...` : `Say something to ${character.name}!`}
-      </div>
     </div>
   );
 } 

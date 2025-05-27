@@ -41,7 +41,7 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
     setTimeout(() => {
       setCenterIdx((prev) => (prev - 1 + total) % total);
       setDirection(null);
-    }, 300);
+    }, 200);
   };
 
   // Move carousel right (next character becomes center)
@@ -50,7 +50,7 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
     setTimeout(() => {
       setCenterIdx((prev) => (prev + 1) % total);
       setDirection(null);
-    }, 300);
+    }, 200);
   };
 
   // Touch event handlers for mobile swipe
@@ -193,22 +193,22 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
           100% { transform: scale(1.1) translateX(0px) translateY(0px) opacity(1); }
         }
         .animate-arc-left .arc-left {
-          animation: arc-left 1.1s cubic-bezier(0.77,0,0.175,1) both;
+          animation: arc-left 0.7s cubic-bezier(0.77,0,0.175,1) both;
         }
         .animate-arc-left .arc-center {
-          animation: arc-center 1.1s cubic-bezier(0.77,0,0.175,1) both;
+          animation: arc-center 0.7s cubic-bezier(0.77,0,0.175,1) both;
         }
         .animate-arc-left .arc-right {
-          animation: arc-right 1.1s cubic-bezier(0.77,0,0.175,1) both;
+          animation: arc-right 0.7s cubic-bezier(0.77,0,0.175,1) both;
         }
         .animate-arc-right .arc-right {
-          animation: arc-left 1.1s cubic-bezier(0.77,0,0.175,1) both reverse;
+          animation: arc-left 0.7s cubic-bezier(0.77,0,0.175,1) both reverse;
         }
         .animate-arc-right .arc-center {
-          animation: arc-center 1.1s cubic-bezier(0.77,0,0.175,1) both reverse;
+          animation: arc-center 0.7s cubic-bezier(0.77,0,0.175,1) both reverse;
         }
         .animate-arc-right .arc-left {
-          animation: arc-right 1.1s cubic-bezier(0.77,0,0.175,1) both reverse;
+          animation: arc-right 0.7s cubic-bezier(0.77,0,0.175,1) both reverse;
         }
         @keyframes glow {
           0%, 100% { box-shadow: 0 0 32px 8px rgba(59,130,246,0.25), 0 0 0 0 rgba(59,130,246,0.10); }
