@@ -107,13 +107,6 @@ export default function ChatPage({ params }: ChatPageProps) {
         <div className="mt-8 sm:mt-12">
           <VoiceOrb character={character} stopVoiceRef={stopVoiceRef} />
         </div>
-
-        {/* Instructions */}
-        <div className="mt-8 sm:mt-12 text-center px-2">
-          <p className="text-base sm:text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto">
-            Click the microphone to start speaking. {character.name} will respond to your voice in real-time.
-          </p>
-        </div>
       </div>
     </main>
   );

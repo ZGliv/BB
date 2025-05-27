@@ -17,9 +17,10 @@ import { getVapi, stopVapi } from '@/lib/vapiSingleton';
 interface VoiceOrbProps {
   character: Character;
   stopVoiceRef: MutableRefObject<() => void>;
+  onTranscript?: (transcript: string) => void; // Callback for real-time transcript
 }
 
-export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
+export default function VoiceOrb({ character, stopVoiceRef, onTranscript }: VoiceOrbProps) {
   // State to track if the assistant is speaking
   const [isSpeaking, setIsSpeaking] = useState(false);
   // Ref to store the current Vapi instance
@@ -60,6 +61,16 @@ export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
       // Listen for speaking events BEFORE starting – avoids missing first event
       vapi.on('speech-start', () => setIsSpeaking(true));
       vapi.on('speech-end', () => setIsSpeaking(false));
+
+      // Listen for transcript messages
+      vapi.on('message', (message: any) => {
+        // If the message contains a transcript, call onTranscript
+        if (message && message.type === 'transcript' && message.transcript) {
+          if (typeof onTranscript === 'function') {
+            onTranscript(message.transcript);
+          }
+        }
+      });
 
       // Start the conversation with the selected assistant
       vapi.start(character.assistantId);
