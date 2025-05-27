@@ -76,7 +76,7 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
     // Carousel outer container
     <div
       className="relative w-full flex flex-col items-center select-none"
-      style={{ minHeight: 320 }}
+      style={{ minHeight: 400 }}
     >
       {/* Left arrow button - positioned exactly on the left edge */}
       <button
@@ -113,9 +113,9 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
       >
         {/* Left (blurred, faded, large, floating circle, with context shadow, 3D effect) */}
         <div
-          className="flex flex-col items-center flex-shrink-0 arc-left"
+          className="flex flex-col items-center flex-shrink-0 arc-left absolute bottom-0 left-0 sm:relative sm:bottom-auto sm:left-auto"
           style={{
-            transform: 'scale(0.8) translateY(30px)',
+            transform: 'scale(0.8) translateY(0) sm:translateY(30px)',
             opacity: 0.5,
             filter: 'blur(1.5px) grayscale(80%)',
             zIndex: 1,
@@ -138,7 +138,7 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
         {/* Center (focused, largest, glowing, floating circle, with context shadow, 3D effect) */}
         <Link
           href={`/chat/${characters[centerIdx].id}`}
-          className="relative flex flex-col items-center flex-shrink-0 arc-center group"
+          className="relative flex flex-col items-center flex-shrink-0 arc-center group mt-8 sm:mt-0"
           style={{
             transform: 'scale(1.1) translateY(0px)',
             opacity: 1,
@@ -162,9 +162,9 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
         </Link>
         {/* Right (blurred, faded, large, floating circle, with context shadow, 3D effect) */}
         <div
-          className="flex flex-col items-center flex-shrink-0 arc-right"
+          className="flex flex-col items-center flex-shrink-0 arc-right absolute bottom-0 right-0 sm:relative sm:bottom-auto sm:right-auto"
           style={{
-            transform: 'scale(0.8) translateY(30px)',
+            transform: 'scale(0.8) translateY(0) sm:translateY(30px)',
             opacity: 0.5,
             filter: 'blur(1.5px) grayscale(80%)',
             zIndex: 1,
