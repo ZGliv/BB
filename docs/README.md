@@ -1,4 +1,4 @@
-# Dayron GPT - Voice-Enabled AI Chat Application
+# Bigot Bot - Voice-Enabled AI Chat Application
 
 A Next.js application that integrates with Vapi.ai for real-time voice conversations with AI.
 
