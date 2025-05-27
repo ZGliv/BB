@@ -54,7 +54,7 @@ export const CHARACTERS: Character[] = [
     id: 'xbele',
     name: '!Xbele',
     assistantId: 'c6e27206-2a6d-4304-b6a3-45d63afb7512',
-    imagePath: '/images/characters/!xbele.png',
+    imagePath: '/images/characters/xbele.png',
     backgroundImage: '/images/backgrounds/xbele-background.png'
   },
   {
