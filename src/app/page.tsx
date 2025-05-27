@@ -44,7 +44,7 @@ export default function Dashboard() {
         </div>
         {/* Footer hint for user guidance */}
         <footer className="w-full text-center text-white/80 text-sm mt-8 mb-2 select-none">
-          <span>Tip: Use the arrows or swipe to browse characters. Click the center character to chat!</span>
+          <span>Tip: Swipe to browse characters. Click the center character to chat!</span>
         </footer>
       </div>
     </main>
