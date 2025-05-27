@@ -39,7 +39,7 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
 
   // Handle drag end: determine direction and update centerIdx
   const handleDragEnd = (_: any, info: { offset: { x: number } }) => {
-    const threshold = 80; // Minimum px to trigger a change
+    const threshold = 50; // Reduced threshold for mobile
     if (info.offset.x < -threshold) {
       // Swiped left, go to next character
       dragDirection.current = 'right';
@@ -76,18 +76,18 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
     // Carousel outer container
     <div
       className="relative w-full flex flex-col items-center select-none"
-      style={{ minHeight: 340 }}
+      style={{ minHeight: 280 }}
     >
       {/* Left arrow button - positioned exactly on the left edge */}
       <button
         onClick={() => handleArrowClick('left')}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-300 hover:scale-110"
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-lg rounded-full p-1.5 sm:p-2 transition-all duration-300 hover:scale-110"
         style={{ transform: 'translate(-50%, -50%)' }}
         aria-label="Previous character"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-blue-600"
+          className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -103,7 +103,7 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
 
       {/* Carousel container with Framer Motion drag and spring animation */}
       <motion.div
-        className="flex items-center justify-center w-full gap-2 md:gap-8 lg:gap-16 relative overflow-visible touch-pan-x"
+        className="flex items-center justify-center w-full gap-1 sm:gap-2 md:gap-8 lg:gap-16 relative overflow-visible touch-pan-x"
         style={{ x }}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
@@ -123,17 +123,17 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
         >
           <div className="relative flex items-center justify-center">
             {/* Radial shadow for context */}
-            <div className="absolute w-[120px] h-[120px] md:w-[200px] md:h-[200px] rounded-full bg-gradient-to-br from-blue-200/30 via-white/0 to-purple-200/20 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
+            <div className="absolute w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] md:w-[200px] md:h-[200px] rounded-full bg-gradient-to-br from-blue-200/30 via-white/0 to-purple-200/20 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
             <Image
               src={characters[leftIdx].imagePath}
               alt={characters[leftIdx].name}
               width={120}
               height={120}
-              className="rounded-full object-cover border-4 border-gray-200 shadow-md transition-all duration-300 z-10 w-[100px] h-[100px] md:w-[180px] md:h-[180px]"
+              className="rounded-full object-cover border-4 border-gray-200 shadow-md transition-all duration-300 z-10 w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[180px] md:h-[180px]"
               style={{ zIndex: 1 }}
             />
           </div>
-          <span className="mt-1 text-sm md:text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[leftIdx].name}</span>
+          <span className="mt-1 text-xs sm:text-sm md:text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[leftIdx].name}</span>
         </div>
         {/* Center (focused, largest, glowing, floating circle, with context shadow, 3D effect) */}
         <Link
@@ -147,18 +147,18 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
         >
           <div className="relative flex items-center justify-center">
             {/* Radial shadow for context */}
-            <div className="absolute w-[200px] h-[200px] md:w-[320px] md:h-[320px] rounded-full bg-gradient-to-br from-blue-300/40 via-white/0 to-purple-300/30 blur-2xl z-0" style={{ left: '-20px', top: '-20px' }} />
+            <div className="absolute w-[140px] h-[140px] sm:w-[200px] sm:h-[200px] md:w-[320px] md:h-[320px] rounded-full bg-gradient-to-br from-blue-300/40 via-white/0 to-purple-300/30 blur-2xl z-0" style={{ left: '-20px', top: '-20px' }} />
             <Image
               src={characters[centerIdx].imagePath}
               alt={characters[centerIdx].name}
               width={180}
               height={180}
-              className="rounded-full object-cover border-8 border-blue-500 shadow-xl animate-glow animate-float group-hover:scale-110 transition-transform duration-300 z-10 w-[150px] h-[150px] md:w-[260px] md:h-[260px]"
+              className="rounded-full object-cover border-8 border-blue-500 shadow-xl animate-glow animate-float group-hover:scale-110 transition-transform duration-300 z-10 w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] md:w-[260px] md:h-[260px]"
               priority
               style={{ zIndex: 2 }}
             />
           </div>
-          <span className="mt-2 text-lg md:text-3xl font-extrabold text-blue-700 drop-shadow-lg tracking-tight text-center w-full" style={{ fontFamily: 'Inter, sans-serif' }}>{characters[centerIdx].name}</span>
+          <span className="mt-2 text-base sm:text-lg md:text-3xl font-extrabold text-blue-700 drop-shadow-lg tracking-tight text-center w-full" style={{ fontFamily: 'Inter, sans-serif' }}>{characters[centerIdx].name}</span>
         </Link>
         {/* Right (blurred, faded, large, floating circle, with context shadow, 3D effect) */}
         <div
@@ -172,30 +172,30 @@ export default function InfiniteCharacterCarousel({ characters }: InfiniteCharac
         >
           <div className="relative flex items-center justify-center">
             {/* Radial shadow for context */}
-            <div className="absolute w-[120px] h-[120px] md:w-[200px] md:h-[200px] rounded-full bg-gradient-to-bl from-purple-200/30 via-white/0 to-blue-200/20 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
+            <div className="absolute w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] md:w-[200px] md:h-[200px] rounded-full bg-gradient-to-bl from-purple-200/30 via-white/0 to-blue-200/20 blur-2xl z-0" style={{ left: '-10px', top: '-10px' }} />
             <Image
               src={characters[rightIdx].imagePath}
               alt={characters[rightIdx].name}
               width={120}
               height={120}
-              className="rounded-full object-cover border-4 border-gray-200 shadow-md transition-all duration-300 z-10 w-[100px] h-[100px] md:w-[180px] md:h-[180px]"
+              className="rounded-full object-cover border-4 border-gray-200 shadow-md transition-all duration-300 z-10 w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[180px] md:h-[180px]"
               style={{ zIndex: 1 }}
             />
           </div>
-          <span className="mt-1 text-sm md:text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[rightIdx].name}</span>
+          <span className="mt-1 text-xs sm:text-sm md:text-lg font-semibold text-gray-400 drop-shadow text-center w-full">{characters[rightIdx].name}</span>
         </div>
       </motion.div>
 
       {/* Right arrow button - positioned exactly on the right edge */}
       <button
         onClick={() => handleArrowClick('right')}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-lg rounded-full p-2 transition-all duration-300 hover:scale-110"
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-lg rounded-full p-1.5 sm:p-2 transition-all duration-300 hover:scale-110"
         style={{ transform: 'translate(50%, -50%)' }}
         aria-label="Next character"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-blue-600"
+          className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

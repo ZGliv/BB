@@ -1,24 +1,22 @@
 /**
  * VoiceOrb.tsx
- * This component displays a pulsing orb and starts a Vapi AI voice conversation with the selected assistant on mount.
- * The orb animates when the assistant is speaking and shows the character's image.
+ * This component displays a pulsing orb with the character's image and speaking status.
+ * It provides visual feedback when the character is speaking and handles voice interactions.
  *
  * Functions:
- * - VoiceOrb: Renders the orb and manages Vapi AI voice session.
- * - cleanup: Stops the current Vapi instance and removes all listeners.
+ * - cleanup: Cleans up any existing Vapi and DailyIframe instances and logs actions for debugging.
+ * - VoiceOrb: Main component for displaying the orb and managing the Vapi session.
  */
 
 import { useEffect, useRef, useState } from 'react';
-import Vapi from '@vapi-ai/web';
 import { Character } from '@/lib/types';
 import Image from 'next/image';
-
-// Static reference to the last Vapi instance
-let lastVapiInstance: any = null;
+import { MutableRefObject } from 'react';
+import { getVapi, stopVapi } from '@/lib/vapiSingleton';
 
 interface VoiceOrbProps {
   character: Character;
-  stopVoiceRef?: React.MutableRefObject<() => void>;
+  stopVoiceRef: MutableRefObject<() => void>;
 }
 
 export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
@@ -29,55 +27,50 @@ export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
 
   // Function to clean up the current Vapi instance
   const cleanup = () => {
-    if (vapiRef.current) {
-      if (typeof vapiRef.current.destroy === 'function') {
-        vapiRef.current.destroy();
-      } else {
-        vapiRef.current.stop();
-        vapiRef.current.removeAllListeners();
-      }
-      vapiRef.current = null;
-    }
-    if (lastVapiInstance) {
-      if (typeof lastVapiInstance.destroy === 'function') {
-        lastVapiInstance.destroy();
-      } else {
-        lastVapiInstance.stop();
-        lastVapiInstance.removeAllListeners();
-      }
-      lastVapiInstance = null;
-    }
+    console.log('[VoiceOrb] Cleanup called');
+    // Stop and cleanup the shared Vapi instance
+    stopVapi();
+    vapiRef.current = null;
     const win = typeof window !== 'undefined' ? (window as any) : undefined;
     if (win && win.DailyIframe && win.DailyIframe.instance) {
       try {
+        console.log('[VoiceOrb] Destroying window.DailyIframe.instance');
         win.DailyIframe.instance.destroy();
       } catch (e) {
-        // Ignore if already destroyed or not available
+        console.error('[VoiceOrb] Error destroying window.DailyIframe.instance:', e);
       }
     }
     setIsSpeaking(false);
   };
 
   useEffect(() => {
-    // Clean up any existing Vapi instance
-    cleanup();
+    let isMounted = true;
 
-    // Create a new Vapi instance for this session
-    const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || '');
-    vapiRef.current = vapi;
-    lastVapiInstance = vapi;
+    const initConversation = async () => {
+      // Fully stop any existing conversation & clear listeners
+      await stopVapi();
 
-    // Start the conversation with the selected assistant
-    vapi.start(character.assistantId);
+      if (!isMounted) return;
 
-    // Listen for speaking events
-    vapi.on('speech-start', () => setIsSpeaking(true));
-    vapi.on('speech-end', () => setIsSpeaking(false));
+      const vapi = getVapi();
+      vapi.removeAllListeners();
 
-    // Expose cleanup function to parent via ref
-    if (stopVoiceRef) {
-      stopVoiceRef.current = cleanup;
-    }
+      vapiRef.current = vapi;
+
+      // Listen for speaking events BEFORE starting – avoids missing first event
+      vapi.on('speech-start', () => setIsSpeaking(true));
+      vapi.on('speech-end', () => setIsSpeaking(false));
+
+      // Start the conversation with the selected assistant
+      vapi.start(character.assistantId);
+
+      // Expose cleanup function to parent via ref
+      if (stopVoiceRef) {
+        stopVoiceRef.current = cleanup;
+      }
+    };
+
+    initConversation();
 
     // Stop the call if the user reloads or closes the tab
     const handleBeforeUnload = () => {
@@ -90,6 +83,7 @@ export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
       cleanup();
       window.removeEventListener('beforeunload', handleBeforeUnload);
       if (stopVoiceRef) stopVoiceRef.current = () => {};
+      isMounted = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [character.assistantId]);
@@ -98,7 +92,7 @@ export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
     <div className="flex flex-col items-center justify-center">
       {/* Pulsing orb visual with character image */}
       <div
-        className={`w-64 h-64 md:w-80 md:h-80 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 overflow-hidden
+        className={`w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 overflow-hidden
           ${isSpeaking ? 'bg-blue-400 animate-pulse-orb' : 'bg-blue-200'}`}
       >
         <Image
@@ -110,7 +104,7 @@ export default function VoiceOrb({ character, stopVoiceRef }: VoiceOrbProps) {
           priority
         />
       </div>
-      <div className="mt-8 text-2xl md:text-3xl text-white font-semibold text-center drop-shadow-lg">
+      <div className="mt-4 sm:mt-8 text-lg sm:text-2xl md:text-3xl text-white font-semibold text-center drop-shadow-lg px-2">
         {isSpeaking ? `${character.name} is talking...` : `Say something to ${character.name}!`}
       </div>
       <style jsx global>{`

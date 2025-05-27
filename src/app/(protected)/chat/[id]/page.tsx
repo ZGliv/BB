@@ -10,10 +10,10 @@
  */
 
 import { CHARACTERS } from '@/lib/constants';
-import { notFound, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import VoiceOrb from '@/components/VoiceOrb';
 import { useRef, useEffect } from 'react';
-import Image from 'next/image';
 
 interface ChatPageProps {
   params: {
@@ -23,32 +23,31 @@ interface ChatPageProps {
 
 export default function ChatPage({ params }: ChatPageProps) {
   // Find the selected character
-  const character = CHARACTERS.find((char) => char.id === params.id);
+  const character = CHARACTERS.find((c) => c.id === params.id);
   const router = useRouter();
-  // Ref to hold the stopVoice function
   const stopVoiceRef = useRef<() => void>(() => {});
 
-  // If character not found, show 404 page
-  if (!character) {
-    notFound();
-  }
-
-  // Clean up on unmount
+  // Ensure cleanup runs on unmount or when character changes
   useEffect(() => {
     return () => {
-      stopVoiceRef.current();
+      if (stopVoiceRef.current) {
+        stopVoiceRef.current();
+      }
     };
-  }, []);
+  }, [params.id]);
 
-  // Handler for back button
-  const handleBack = (e: React.MouseEvent) => {
-    e.preventDefault();
-    stopVoiceRef.current();
-    // Wait a short moment to allow cleanup, then force a full reload
-    setTimeout(() => {
-      window.location.href = '/'; // This will fully reload the dashboard and kill all lingering resources
-    }, 100);
+  // Handle back button click
+  const handleBack = () => {
+    // Call the cleanup function to stop the voice session
+    if (stopVoiceRef.current) {
+      stopVoiceRef.current();
+    }
+    router.push('/');
   };
+
+  if (!character) {
+    return <div>Character not found</div>;
+  }
 
   return (
     <main className="min-h-screen relative">
@@ -66,12 +65,12 @@ export default function ChatPage({ params }: ChatPageProps) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-6xl mx-auto py-6 sm:py-12 px-3 sm:px-6 lg:px-8">
         {/* Back arrow */}
-        <div className="mb-8">
+        <div className="mb-4 sm:mb-8">
           <button 
             onClick={handleBack} 
-            className="inline-flex items-center text-white hover:text-blue-200 font-semibold text-lg transition-colors duration-200"
+            className="inline-flex items-center text-white hover:text-blue-200 font-semibold text-base sm:text-lg transition-colors duration-200"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -79,7 +78,7 @@ export default function ChatPage({ params }: ChatPageProps) {
               viewBox="0 0 24 24" 
               strokeWidth={2.5} 
               stroke="currentColor" 
-              className="w-7 h-7 mr-2"
+              className="w-6 h-6 sm:w-7 sm:h-7 mr-2"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
@@ -88,18 +87,30 @@ export default function ChatPage({ params }: ChatPageProps) {
         </div>
 
         {/* Character Name */}
-        <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-8 text-center tracking-tight drop-shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <h1 
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 sm:mb-8 text-center tracking-tight drop-shadow-lg" 
+          style={{ 
+            fontFamily: 'Inter, sans-serif',
+            textShadow: `
+              -1px -1px 0 #3b82f6,
+              1px -1px 0 #3b82f6,
+              -1px 1px 0 #3b82f6,
+              1px 1px 0 #3b82f6,
+              0 0 8px rgba(59, 130, 246, 0.5)
+            `
+          }}
+        >
           Chat with {character.name}
         </h1>
 
         {/* Voice Orb Container */}
-        <div className="mt-12">
+        <div className="mt-8 sm:mt-12">
           <VoiceOrb character={character} stopVoiceRef={stopVoiceRef} />
         </div>
 
         {/* Instructions */}
-        <div className="mt-12 text-center">
-          <p className="text-xl text-white/90 font-medium max-w-2xl mx-auto">
+        <div className="mt-8 sm:mt-12 text-center px-2">
+          <p className="text-base sm:text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto">
             Click the microphone to start speaking. {character.name} will respond to your voice in real-time.
           </p>
         </div>
